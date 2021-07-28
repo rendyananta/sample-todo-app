@@ -1,5 +1,7 @@
 FROM node:15.5-alpine AS assets-build
 
+LABEL org.opencontainers.image.source=https://github.com/rendyananta/sample-todo-app
+
 WORKDIR /var/www/html
 
 COPY . /var/www/html/
