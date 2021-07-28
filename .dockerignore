@@ -1,0 +1,6 @@
+/.git
+/Makefile
+/opt/*/Dockerfile
+/node_modules/
+/vendor/
+/storage/logs/

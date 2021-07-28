@@ -1,0 +1,74 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name:  todo-app
+  namespace: default
+  labels:
+    app:  todo-app
+spec:
+  selector:
+    matchLabels:
+      app: todo-app
+  replicas: 1
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app:  todo-app
+    spec:
+      initContainers:
+        - name: todo-app-migrations
+          imagePullPolicy: Never
+          image:  rendyananta/todo-app:latest
+          resources:
+            limits:
+              cpu: 500m
+              memory: 200Mi
+      volumes:
+        - name: cache
+          emptyDir: {}
+        - name: testing
+          emptyDir: {}
+        - name: views
+          emptyDir: {}
+      securityContext:
+        fsGroup: 1000
+      containers:
+      - name: fpm
+        image:  rendyananta/todo-app:latest
+        resources:
+          limits:
+            cpu: 500m
+            memory: 200Mi
+        securityContext:
+          runAsUser: 1000
+        ports:
+        - containerPort:  9000
+          name: fpm
+        volumeMounts:
+          - name: cache
+            mountPath: /var/www/html/storage/framework/cache
+          - name: views
+            mountPath: /var/www/html/storage/framework/views
+          - name: testing
+            mountPath: /var/www/html/storage/framework/testing
+        envFrom:
+          - configMapRef:
+              name: todo-app
+          - secretRef:
+              name: todo-app
+      - name: nginx
+        image: rendyananta/todo-app-nginx:latest
+        resources:
+          limits:
+            cpu: 500m
+            memory: 100Mi
+        securityContext:
+          runAsUser: 1000
+        ports:
+        - containerPort:  80
+          name: fpm
