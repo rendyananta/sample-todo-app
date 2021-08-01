@@ -1,6 +1,8 @@
-FROM rendyananta/php-docker:8.0 AS build-fpm
+FROM rendyananta/php-docker:8.0 AS base
 
 LABEL org.opencontainers.image.source=https://github.com/rendyananta/sample-todo-app
+
+FROM base AS build-fpm
 
 WORKDIR /var/www/html
 
@@ -23,4 +25,6 @@ RUN composer dump-autoload -o
 
 FROM build-fpm AS fpm
 
-COPY --from=build-fpm /var/www/html /var/www/html
+COPY --from=build-fpm --chown=www-data:www-data /var/www/html /var/www/html
+
+USER www-data

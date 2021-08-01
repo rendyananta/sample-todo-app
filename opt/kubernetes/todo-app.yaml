@@ -10,24 +10,18 @@ spec:
     matchLabels:
       app: todo-app
   replicas: 1
-  strategy:
-    rollingUpdate:
-      maxSurge: 25%
-      maxUnavailable: 25%
-    type: RollingUpdate
   template:
     metadata:
       labels:
         app:  todo-app
     spec:
-      initContainers:
-        - name: todo-app-migrations
-          imagePullPolicy: Never
-          image:  rendyananta/todo-app:latest
-          resources:
-            limits:
-              cpu: 500m
-              memory: 200Mi
+      # initContainers:
+      #   - name: todo-app-migrations
+      #     image: rendyananta/sample-todo-app:fpm
+      #     resources:
+      #       limits:
+      #         cpu: 500m
+      #         memory: 200Mi
       volumes:
         - name: cache
           emptyDir: {}
@@ -39,15 +33,14 @@ spec:
         fsGroup: 1000
       containers:
       - name: fpm
-        image:  rendyananta/todo-app:latest
+        image: rendyananta/sample-todo-app:fpm
+        imagePullPolicy: Always
         resources:
           limits:
             cpu: 500m
-            memory: 200Mi
-        securityContext:
-          runAsUser: 1000
+            memory: 300Mi
         ports:
-        - containerPort:  9000
+        - containerPort: 9000
           name: fpm
         volumeMounts:
           - name: cache
@@ -62,7 +55,8 @@ spec:
           - secretRef:
               name: todo-app
       - name: nginx
-        image: rendyananta/todo-app-nginx:latest
+        image: rendyananta/sample-todo-app:nginx
+        imagePullPolicy: Always
         resources:
           limits:
             cpu: 500m
@@ -70,5 +64,5 @@ spec:
         securityContext:
           runAsUser: 1000
         ports:
-        - containerPort:  80
-          name: fpm
+        - containerPort:  8000
+          name: nginx
