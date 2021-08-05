@@ -2,11 +2,12 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: mysql
-  namespace: db
 spec:
   selector:
     matchLabels:
       app: mysql
+  strategy:
+    type: Recreate
   template:
     metadata:
       labels:
@@ -18,7 +19,7 @@ spec:
             claimName: mysql-pvc
       containers:
       - name: mysql
-        image: mysql:8.0
+        image: mariadb:10.6
         resources:
           limits:
             memory: "1Gi"
@@ -27,11 +28,17 @@ spec:
         - containerPort: 3306
           name: mysql
         env:
-          - name: MYSQL_DATABASE
-            value: todo_app_db
-        envFrom:
-          - secretRef: 
-              name: mysql-secret
+        - name: MYSQL_RANDOM_ROOT_PASSWORD
+          value: "true"
+        - name: MYSQL_USER
+          value: todo_app
+        - name: MYSQL_PASSWORD
+          valueFrom:
+              secretKeyRef: 
+                name: mysql-secret
+                key: password
+        - name: MYSQL_DATABASE
+          value: todo_app_db
         volumeMounts:
           - mountPath: /var/lib/mysql
             name: mysql-data

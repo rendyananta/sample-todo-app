@@ -14,12 +14,11 @@ data:
   LOG_LEVEL: debug
 
   DB_CONNECTION: mysql
-  DB_HOST: my-db-pxc-db-haproxy
+  DB_HOST: mysql
   DB_PORT: "3306"
   DB_DATABASE: todo_app_db
   DB_FOREIGN_KEYS: "true"
-  DB_USERNAME: "root"
-  DB_PASSWORD: ""
+  DB_USERNAME: "todo_app"
 
   BROADCAST_DRIVER: log
   CACHE_DRIVER: file

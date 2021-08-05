@@ -5,6 +5,8 @@ metadata:
   namespace: default
   labels:
     app:  todo-app
+  annotations:
+    configmap.reloader.stakater.com/reload: todo-app
 spec:
   selector:
     matchLabels:
@@ -15,13 +17,30 @@ spec:
       labels:
         app:  todo-app
     spec:
-      # initContainers:
-      #   - name: todo-app-migrations
-      #     image: rendyananta/sample-todo-app:fpm
-      #     resources:
-      #       limits:
-      #         cpu: 500m
-      #         memory: 200Mi
+      initContainers:
+        - name: migrations
+          image: rendyananta/sample-todo-app:fpm
+          resources:
+            limits:
+              cpu: 200m
+              memory: 100Mi
+          env:
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef: 
+                  name: mysql-secret
+                  key: password   
+          envFrom:
+            - configMapRef:
+                name: todo-app
+            - secretRef:
+                name: todo-app
+          command:
+            - "php"
+          args:
+            - "artisan"
+            - "migrate"
+            - "--force"
       volumes:
         - name: cache
           emptyDir: {}
@@ -49,6 +68,12 @@ spec:
             mountPath: /var/www/html/storage/framework/views
           - name: testing
             mountPath: /var/www/html/storage/framework/testing
+        env:
+          - name: DB_PASSWORD
+            valueFrom:
+              secretKeyRef: 
+                name: mysql-secret
+                key: password   
         envFrom:
           - configMapRef:
               name: todo-app
