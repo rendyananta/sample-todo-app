@@ -1,0 +1,22 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: todo-app-ingress
+  namespace: default
+spec:
+  defaultBackend:
+    service:
+      name: todo-app
+      port: 
+        number: 80
+  rules:
+  - host: todo-app.kubernetes-local
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: todo-app
+            port:
+              number: 80
