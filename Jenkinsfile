@@ -32,7 +32,7 @@ pipeline {
                     sh 'php artisan test'
                 }
             }
-        // }
+        }
         // stage('Deploy') {
         //     steps {
         //         echo 'Deploying....'
