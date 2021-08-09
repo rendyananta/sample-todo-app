@@ -8,7 +8,8 @@ pipeline {
                     url: 'https://github.com/rendyananta/sample-todo-app.git'
 
                 script {
-                    docker.build("rendyananta/sample-todo-app:fpm", "-f opt/container/php-fpm/Dockerfile")
+                    sh 'docker --version'
+                    // docker.build("rendyananta/sample-todo-app:fpm", "-f opt/container/php-fpm/Dockerfile")
                 }
 
                 // script {
