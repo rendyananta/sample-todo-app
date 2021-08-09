@@ -15,8 +15,10 @@ pipeline {
         }
         stage('Test') {
             steps {
-                app.inside {
-                    sh 'php artisan test'
+                script {
+                    app.inside {
+                        sh 'php artisan test'
+                    }
                 }
             }
         }
