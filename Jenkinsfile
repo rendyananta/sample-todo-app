@@ -4,7 +4,8 @@ pipeline {
     stages {
         stage('Build') {
             steps {
-                git url: 'https://github.com/rendyananta/sample-todo-app.git'
+                git branch: 'main',
+                    url: 'https://github.com/rendyananta/sample-todo-app.git'
 
                 script {
                     docker.build("rendyananta/sample-todo-app:fpm", "-f opt/container/php-fpm/Dockerfile")
