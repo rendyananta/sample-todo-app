@@ -25,7 +25,7 @@ RUN composer dump-autoload -o
 
 FROM build-fpm AS fpm
 
-RUN adduser -D -H -u 1000 -s /bin/bash www-data -G www-data
+# RUN adduser -D -H -u 1000 -s /bin/bash www-data -G www-data
 
 COPY --from=build-fpm --chown=www-data:www-data /var/www/html /var/www/html
 
