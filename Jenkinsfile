@@ -31,7 +31,6 @@ spec:
     }
 
     stages {
-
         stage('checkout') {
             steps {
                 git branch: 'main', 
@@ -39,20 +38,11 @@ spec:
             }
         }
 
-        stage('build-php') {
+        stage('build') {
             steps {
                 container(name: 'kaniko', shell: '/busybox/sh') {
                     sh '''#!/busybox/sh
-                        /kaniko/executor --dockerfile `pwd`/opt/container/php-fpm/Dockerfile --context `pwd` --destination rendyananta/sample-todo-app:fpm
-                    '''
-                }
-            }
-        }
-
-        stage('build-nginx') {
-            steps {
-                container(name: 'kaniko', shell: '/busybox/sh') {
-                    sh '''#!/busybox/sh
+                        /kaniko/executor --dockerfile `pwd`/opt/container/php-fpm/Dockerfile --context `pwd` --destination rendyananta/sample-todo-app:fpm &&
                         /kaniko/executor --dockerfile `pwd`/opt/container/nginx/Dockerfile --context `pwd` --destination rendyananta/sample-todo-app:nginx
                     '''
                 }
