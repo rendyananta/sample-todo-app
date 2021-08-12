@@ -24,6 +24,7 @@ COPY . /var/www/html
 
 RUN composer dump-autoload -o
 
+RUN php artisan key:generate --env=testing
 RUN php artisan test
 
 FROM build-fpm AS fpm
