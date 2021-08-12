@@ -23,6 +23,8 @@ COPY . /var/www/html
 
 RUN composer dump-autoload -o
 
+RUN php artisan test
+
 FROM build-fpm AS fpm
 
 # RUN adduser -D -H -u 1000 -s /bin/bash www-data -G www-data
