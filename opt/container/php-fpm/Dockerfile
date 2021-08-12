@@ -11,8 +11,9 @@ COPY /artisan artisan
 
 # Prevent composer install again if the composer.json file doesn't changed
 COPY /composer.json composer.json
+COPY /composer.lock composer.lock
 
-RUN composer install --prefer-dist --no-ansi --no-dev --no-autoloader
+RUN composer install --prefer-dist --no-ansi --no-autoloader
 
 # Optimize for image building cache
 COPY /bootstrap bootstrap
