@@ -33,7 +33,7 @@ spec:
     stages {
         stage('checkout') {
             steps {
-                git branch: 'main', 
+                git branch: 'main',
                     url: 'https://github.com/rendyananta/sample-todo-app.git'
             }
         }
@@ -50,7 +50,12 @@ spec:
         }
     }
 
+    // agent {
+    //      docker 'rendyananta/php-docker:8.0'
+    // }
+
     // stages {
+    //
     //     stage('Build') {
     //         steps {
     //             git branch: 'main',
