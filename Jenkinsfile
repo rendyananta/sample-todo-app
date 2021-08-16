@@ -40,8 +40,8 @@ spec:
             steps {
                 container(name: 'kaniko', shell: '/busybox/sh') {
                     sh '''#!/busybox/sh
-                        /kaniko/executor --dockerfile `pwd`/opt/container/php-fpm/Dockerfile --context `pwd` --destination rendyananta/sample-todo-app:fpm --cache=true --cache-copy-layers
-                        /kaniko/executor --dockerfile `pwd`/opt/container/nginx/Dockerfile --context `pwd` --destination rendyananta/sample-todo-app:nginx --cache=true --cache-copy-layers
+                        /kaniko/executor --dockerfile `pwd`/opt/container/php-fpm/Dockerfile --context `pwd` --destination rendyananta/sample-todo-app:fpm --cache=true --cache-copy-layers --cache-repo rendyananta/sample-todo-app-fpm-cache
+                        /kaniko/executor --dockerfile `pwd`/opt/container/nginx/Dockerfile --context `pwd` --destination rendyananta/sample-todo-app:nginx --cache=true --cache-copy-layers --cache-repo rendyananta/sample-todo-app-nginx-cache
                     '''
                 }
             }
