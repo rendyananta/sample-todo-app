@@ -19,7 +19,7 @@ spec:
       mountPath: /kaniko/.docker
   volumes:
   - name: jenkins-docker-cfg
-      projected:
+    projected:
       sources:
       - secret:
           name: docker-credentials
@@ -49,38 +49,4 @@ spec:
             }
         }
     }
-
-    // agent {
-    //      docker 'rendyananta/php-docker:8.0'
-    // }
-
-    // stages {
-    //
-    //     stage('Build') {
-    //         steps {
-    //             git branch: 'main',
-    //                 url: 'https://github.com/rendyananta/sample-todo-app.git'
-
-    //             script {
-    //                 sh 'docker --version'
-    //                 // docker.build("rendyananta/sample-todo-app:fpm", "-f opt/container/php-fpm/Dockerfile")
-    //             }
-
-    //             // script {
-    //             //     def app = docker.build("rendyananta/sample-todo-app:fpm", "-f opt/container/php-fpm/Dockerfile")
-
-    //             //     def nginx = docker.build("rendyananta/sample-todo-app:nginx", "-f opt/container/nginx/Dockerfile")
-    //             // }
-    //         }
-    //     }
-    //     // stage('Test') {
-    //     //     steps {
-    //     //         script {
-    //     //             app.inside {
-    //     //                 sh 'php artisan test'
-    //     //             }
-    //     //         }
-    //     //     }
-    //     // }
-    // }
 }
