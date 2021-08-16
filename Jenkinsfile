@@ -31,18 +31,11 @@ spec:
     }
 
     stages {
-        stage('checkout') {
-            steps {
-                git branch: 'main',
-                    url: 'https://github.com/rendyananta/sample-todo-app.git'
-            }
-        }
-
         stage('build') {
             steps {
                 container(name: 'kaniko', shell: '/busybox/sh') {
                     sh '''#!/busybox/sh
-                        /kaniko/executor --dockerfile `pwd`/opt/container/php-fpm/Dockerfile --context `pwd` --destination rendyananta/sample-todo-app:fpm &&
+                        /kaniko/executor --dockerfile `pwd`/opt/container/php-fpm/Dockerfile --context `pwd` --destination rendyananta/sample-todo-app:fpm
                         /kaniko/executor --dockerfile `pwd`/opt/container/nginx/Dockerfile --context `pwd` --destination rendyananta/sample-todo-app:nginx
                     '''
                 }
