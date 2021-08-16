@@ -13,6 +13,11 @@ FROM nginx:1.19-alpine AS nginx
 
 RUN adduser -D -H -u 1000 -s /bin/bash www-data -G www-data
 
+RUN chown -R www-data:www-data /var/cache/nginx && \
+        chown -R www-data:www-data /var/log/nginx && \
+        chown -R www-data:www-data /etc/nginx/conf.d && \
+        chown www-data:www-data /etc/nginx/nginx.conf
+
 # Setup nginx pid
 RUN touch /var/run/nginx.pid && \
       chown -R www-data:www-data /var/run/nginx.pid
