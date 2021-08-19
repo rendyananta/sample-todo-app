@@ -1,7 +1,11 @@
 pipeline {
-    agent {
-        kubernetes {
-            yaml """
+    agent none
+
+    stages {
+        stage('build-tag') {
+            agent {
+                kubernetes {
+                    yaml """
 kind: Pod
 metadata:
   name: kaniko
@@ -32,11 +36,9 @@ spec:
     persistentVolumeClaim: 
       claimName: kaniko-cache
 """
-        }
-    }
+                }
+            }
 
-    stages {
-        stage('build-tag') {
             steps {
                 container(name: 'kaniko', shell: '/busybox/sh') {
                     sh """#!/busybox/sh
@@ -49,6 +51,7 @@ spec:
 
         stage('deploy') {
             when { branch 'main' }
+            agent any
             steps {
                 withKubeConfig([credentialsId: 'k3s-kubeconfig']) {
                     sh """
