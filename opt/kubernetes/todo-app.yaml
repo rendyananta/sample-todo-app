@@ -19,7 +19,7 @@ spec:
     spec:
       initContainers:
         - name: migrations
-          image: rendyananta/sample-todo-app:fpm
+          image: rendyananta/sample-todo-app:fpm-${APP_VERSION}
           resources:
             limits:
               cpu: 200m
@@ -52,7 +52,7 @@ spec:
         fsGroup: 1000
       containers:
       - name: fpm
-        image: rendyananta/sample-todo-app:fpm
+        image: rendyananta/sample-todo-app:fpm-${APP_VERSION}
         imagePullPolicy: Always
         resources:
           limits:
@@ -80,7 +80,7 @@ spec:
           - secretRef:
               name: todo-app
       - name: nginx
-        image: rendyananta/sample-todo-app:nginx
+        image: rendyananta/sample-todo-app:nginx-${APP_VERSION}
         imagePullPolicy: Always
         resources:
           limits:

@@ -36,13 +36,22 @@ spec:
     }
 
     stages {
-        stage('build') {
+        stage('build-tag') {
             steps {
                 container(name: 'kaniko', shell: '/busybox/sh') {
-                    sh '''#!/busybox/sh
-                        /kaniko/executor --dockerfile=`pwd`/opt/container/php-fpm/Dockerfile --context=`pwd` --destination=rendyananta/sample-todo-app:fpm --cache --cache-dir=/cache --cache-copy-layers
-                        /kaniko/executor --dockerfile=`pwd`/opt/container/nginx/Dockerfile --context=`pwd` --destination=rendyananta/sample-todo-app:nginx --cache --cache-dir=/cache --cache-copy-layers
-                    '''
+                    sh """#!/busybox/sh
+                        /kaniko/executor --dockerfile=`pwd`/opt/container/php-fpm/Dockerfile --context=`pwd` --destination=rendyananta/sample-todo-app:fpm-${GIT_COMMIT} --cache --cache-dir=/cache --cache-copy-layers
+                        /kaniko/executor --dockerfile=`pwd`/opt/container/nginx/Dockerfile --context=`pwd` --destination=rendyananta/sample-todo-app:nginx-${GIT_COMMIT} --cache --cache-dir=/cache --cache-copy-layers
+                    """
+                }
+            }
+        }
+
+        stage('deploy') {
+            when { branch 'main' }
+            steps {
+                withKubeConfig([credentialsId: 'k3s-kubeconfig']) {
+                    "APP_VERSION=${GIT_COMMIT} envsubst < `pwd`/opt/kubernetes/todo-app.yaml | kubectl apply -f -"
                 }
             }
         }
