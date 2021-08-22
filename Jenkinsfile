@@ -1,7 +1,7 @@
 pipeline {
     agent none
 
-//     stages {
+    stages {
 //         stage('test') {
 //             agent {
 //                 kubernetes {
