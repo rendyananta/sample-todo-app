@@ -19,9 +19,11 @@ spec:
       args:
         - 9999999
     - name: php
-      image: rendyananta/php-docker:8.0
+      image: chilio/laravel-dusk-ci:php-8.0
       imagePullPolicy: Always
       env:
+        - name: APP_URL
+          value: http://localhost
         - name: DB_CONNECTION
           value: mysql
         - name: DB_HOST
@@ -62,8 +64,11 @@ spec:
                 
                 container(name: 'php', shell: '/bin/ash') {
                     sh """#!/bin/ash
-                      php artisan key:generate --env=testing
-                      php artisan migrate:fresh --seed --env=testing
+                      php artisan test --env=testing
+                      cp .env.example .env
+                      configure-laravel
+                      start-nginx-ci-project
+                      php artisan dusk
                     """
                 }
             }
