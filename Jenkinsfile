@@ -94,7 +94,7 @@ spec:
 
                               php artisan dusk
                             """
-                        } catch () {
+                        } catch (err) {
                             error('Build aborted. Reason: Cannot pass unit tests')
                         }
                     }
