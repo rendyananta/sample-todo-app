@@ -35,20 +35,20 @@ spec:
         - name: DB_PASSWORD
           value: laravel
     - name: mariadb
-          image: mariadb:10
-          env:
-            - name: MYSQL_RANDOM_ROOT_PASSWORD
-              value: "true"
-            - name: MYSQL_USER
-              value: laravel
-            - name: MYSQL_PASSWORD
-              value: laravel
-            - name: MYSQL_DATABASE
-              value: laravel
-          resources: {}
-          ports:
-            - containerPort: 3306
-                    """
+      image: mariadb:10
+      env:
+        - name: MYSQL_RANDOM_ROOT_PASSWORD
+          value: "true"
+        - name: MYSQL_USER
+          value: laravel
+        - name: MYSQL_PASSWORD
+          value: laravel
+        - name: MYSQL_DATABASE
+          value: laravel
+      resources: {}
+      ports:
+        - containerPort: 3306
+                """
                 }
             }
 
@@ -62,9 +62,8 @@ spec:
                 }
             }
         }
-    }
 
-    stages {
+
         stage('build') {
             agent {
                 kubernetes {
