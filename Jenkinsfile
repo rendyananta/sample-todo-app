@@ -71,10 +71,10 @@ spec:
                     script {
                         try {
                             sh """#!/bin/bash
+                              php artisan key:generate --env=testing
                               php artisan test --env=testing
                             """
-                        }
-                        finally {
+                        } finally {
                             error('Build aborted. Reason: Cannot pass unit tests')
                         }
                     }
@@ -82,8 +82,8 @@ spec:
                 
                 // UI test
                 container(name: 'php', shell: '/bin/bash') {
-                    
-                        catchError {
+                    script {
+                        try {
                             sh """#!/bin/bash
                               cp .env.example .env
                               configure-laravel
@@ -94,9 +94,10 @@ spec:
 
                               php artisan dusk
                             """
+                        } catch () {
+                            error('Build aborted. Reason: Cannot pass unit tests')
                         }
-                    
-                    
+                    }
                 }
             }
         }
