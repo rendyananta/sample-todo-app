@@ -34,10 +34,6 @@ spec:
           value: laravel
         - name: DB_PASSWORD
           value: laravel
-      command:
-        - php
-      args:
-        - artisan serve
     - name: mariadb
       image: mariadb:latest
       env:
