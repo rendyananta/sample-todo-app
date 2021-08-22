@@ -74,7 +74,7 @@ spec:
                               php artisan key:generate --env=testing
                               php artisan test --env=testing
                             """
-                        } finally {
+                        } catch (err) {
                             error('Build aborted. Reason: Cannot pass unit tests')
                         }
                     }
@@ -95,7 +95,7 @@ spec:
                               php artisan dusk
                             """
                         } catch (err) {
-                            error('Build aborted. Reason: Cannot pass unit tests')
+                            error('Build aborted. Reason: Cannot pass UI tests')
                         }
                     }
                 }
