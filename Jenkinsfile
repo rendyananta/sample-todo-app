@@ -1,68 +1,67 @@
 pipeline {
     agent none
 
-    stages {
-        stage('test') {
-            agent {
-                kubernetes {
-                    yaml """
-kind: Pod
-metadata:
-  name: kaniko
-spec:
-  containers:
-    - name: php
-      image: rendyananta/php-docker:8.0
-      imagePullPolicy: Always
-      command:
-        - php
-      args:
-        - artisan 
-        - serve 
-        - --host 
-        - 0.0.0.0
-      env:
-        - name: DB_CONNECTION
-          value: mysql
-        - name: DB_HOST
-          value: localhost
-        - name: DB_PORT
-          value: 3306
-        - name: DB_DATABASE
-          value: laravel
-        - name: DB_USERNAME
-          value: laravel
-        - name: DB_PASSWORD
-          value: laravel
-    - name: mariadb
-      image: mariadb:10
-      env:
-        - name: MYSQL_RANDOM_ROOT_PASSWORD
-          value: "true"
-        - name: MYSQL_USER
-          value: laravel
-        - name: MYSQL_PASSWORD
-          value: laravel
-        - name: MYSQL_DATABASE
-          value: laravel
-      resources: {}
-      ports:
-        - containerPort: 3306
-                """
-                }
-            }
+//     stages {
+//         stage('test') {
+//             agent {
+//                 kubernetes {
+//                     yaml """
+// kind: Pod
+// metadata:
+//   name: kaniko
+// spec:
+//   containers:
+//     - name: php
+//       image: rendyananta/php-docker:8.0
+//       imagePullPolicy: Always
+//       command:
+//         - php
+//       args:
+//         - artisan 
+//         - serve 
+//         - --host 
+//         - 0.0.0.0
+//       env:
+//         - name: DB_CONNECTION
+//           value: mysql
+//         - name: DB_HOST
+//           value: localhost
+//         - name: DB_PORT
+//           value: 3306
+//         - name: DB_DATABASE
+//           value: laravel
+//         - name: DB_USERNAME
+//           value: laravel
+//         - name: DB_PASSWORD
+//           value: laravel
+//     - name: mariadb
+//       image: mariadb:10
+//       env:
+//         - name: MYSQL_RANDOM_ROOT_PASSWORD
+//           value: "true"
+//         - name: MYSQL_USER
+//           value: laravel
+//         - name: MYSQL_PASSWORD
+//           value: laravel
+//         - name: MYSQL_DATABASE
+//           value: laravel
+//       resources: {}
+//       ports:
+//         - containerPort: 3306
+//                 """
+//                 }
+//             }
 
-            steps {
-                container(name: 'php', shell: '/busybox/sh') {
-                    sh """
-                      composer install --prefer-dist --no-ansi --no-autoloader
-                      php artisan key:generate --env=testing
-                      php artisan migrate:fresh --seed --env=testing
-                    """
-                }
-            }
-        }
-
+//             steps {
+//                 container(name: 'php', shell: '/busybox/sh') {
+//                     sh """
+//                       composer install --prefer-dist --no-ansi --no-autoloader
+//                       php artisan key:generate --env=testing
+//                       php artisan migrate:fresh --seed --env=testing
+//                     """
+//                 }
+//             }
+//         }
 
         stage('build') {
             agent {
