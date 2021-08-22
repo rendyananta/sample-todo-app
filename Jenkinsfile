@@ -2,6 +2,77 @@ pipeline {
     agent none
 
     stages {
+        stage('test') {
+            agent {
+                kubernetes {
+                    yaml """
+kind: Pod
+metadata:
+  name: php
+spec:
+  containers:
+    - name: composer
+      image: composer:2
+      imagePullPolicy: Always
+      command:
+        - sleep
+      args:
+        - 9999999
+    - name: php
+      image: rendyananta/php-docker:8.0
+      imagePullPolicy: Always
+      env:
+        - name: DB_CONNECTION
+          value: mysql
+        - name: DB_HOST
+          value: 127.0.0.1
+        - name: DB_PORT
+          value: 3306
+        - name: DB_DATABASE
+          value: laravel
+        - name: DB_USERNAME
+          value: laravel
+        - name: DB_PASSWORD
+          value: laravel
+      command:
+        - php
+      args:
+        - artisan serve
+    - name: mariadb
+      image: mariadb:latest
+      env:
+        - name: MYSQL_RANDOM_ROOT_PASSWORD
+          value: "true"
+        - name: MYSQL_USER
+          value: laravel
+        - name: MYSQL_PASSWORD
+          value: laravel
+        - name: MYSQL_DATABASE
+          value: laravel
+      resources: {}
+      ports:
+        - containerPort: 3306
+                """
+                }
+            }
+
+            steps {
+
+                container(name: 'composer', shell: '/bin/ash') {
+                    sh """#!/bin/ash
+                      composer install --prefer-dist --no-ansi
+                    """
+                }
+                
+                container(name: 'php', shell: '/bin/ash') {
+                    sh """#!/bin/ash
+                      php artisan key:generate --env=testing
+                      php artisan migrate:fresh --seed --env=testing
+                    """
+                }
+            }
+        }
+      
         stage('build') {
             agent {
                 kubernetes {
