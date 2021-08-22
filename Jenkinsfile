@@ -62,8 +62,8 @@ spec:
                     """
                 }
                 
-                container(name: 'php', shell: '/bin/ash') {
-                    sh """#!/bin/ash
+                container(name: 'php', shell: '/bin/bash') {
+                    sh """#!/bin/bash
                       php artisan test --env=testing
                       cp .env.example .env
                       configure-laravel
