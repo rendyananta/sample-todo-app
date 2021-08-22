@@ -55,13 +55,22 @@ spec:
             }
 
             steps {
-
+                // 
                 container(name: 'composer', shell: '/bin/ash') {
                     sh """#!/bin/ash
                       composer install --prefer-dist --no-ansi
                     """
                 }
+
+                // Unit test
+                container(name: 'php', shell: '/bin/bash') {
+                    sh """#!/bin/bash
+                      php artisan key:generate --env=testing
+                      php artisan test --env=testing
+                    """
+                }
                 
+                // UI test
                 container(name: 'php', shell: '/bin/bash') {
                     sh """#!/bin/bash
                       php artisan test --env=testing
@@ -71,6 +80,17 @@ spec:
                       php artisan dusk
                     """
                 }
+            }
+
+
+            post {
+              success {
+                echo 'Test passed'
+              }
+              failure {
+                echo 'Failed to passing a test stage'
+                error('Build is aborted due to failure of test stage')
+              }
             }
         }
       

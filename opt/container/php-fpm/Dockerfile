@@ -13,7 +13,7 @@ COPY /artisan artisan
 COPY /composer.json composer.json
 COPY /composer.lock composer.lock
 
-RUN composer install --prefer-dist --no-ansi --no-autoloader
+RUN composer install --prefer-dist --no-ansi --no-autoloader --no-dev
 
 # Optimize for image building cache
 COPY /bootstrap bootstrap
@@ -23,10 +23,6 @@ COPY /routes routes
 COPY . /var/www/html
 
 RUN composer dump-autoload -o
-
-RUN php artisan key:generate --env=testing
-RUN php artisan migrate:fresh --seed --env=testing
-RUN php artisan test
 
 FROM build-fpm AS fpm
 
