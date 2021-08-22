@@ -57,28 +57,34 @@ spec:
             steps {
                 // 
                 container(name: 'composer', shell: '/bin/ash') {
-                    sh """#!/bin/ash
-                      composer install --prefer-dist --no-ansi
-                    """
+                    catchError {
+                        sh """#!/bin/ash
+                          composer install --prefer-dist --no-ansi
+                        """
+                    }
                 }
 
                 // Unit test
                 container(name: 'php', shell: '/bin/bash') {
-                    sh """#!/bin/bash
-                      php artisan key:generate --env=testing
-                      php artisan test --env=testing
-                    """
+                    catchError {
+                        sh """#!/bin/bash
+                          
+                          php artisan test --env=testing
+                        """
+                    }
                 }
                 
                 // UI test
                 container(name: 'php', shell: '/bin/bash') {
-                    sh """#!/bin/bash
-                      php artisan test --env=testing
-                      cp .env.example .env
-                      configure-laravel
-                      start-nginx-ci-project
-                      php artisan dusk
-                    """
+                    catchError {
+                        sh """#!/bin/bash
+                          php artisan test --env=testing
+                          cp .env.example .env
+                          configure-laravel
+                          start-nginx-ci-project
+                          php artisan dusk
+                        """
+                    }
                 }
             }
 
