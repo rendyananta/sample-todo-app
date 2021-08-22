@@ -68,18 +68,16 @@ spec:
 
                 // Unit test
                 container(name: 'php', shell: '/bin/bash') {
-                  script {
-                    try {
-                        catchError () {
+                    script {
+                        try {
                             sh """#!/bin/bash
                               php artisan test --env=testing
                             """
                         }
+                        finally {
+                            error('Build aborted. Reason: Cannot pass unit tests')
+                        }
                     }
-                    finally {
-                        error('Build aborted. Reason: Cannot pass unit tests')
-                    }
-                  }
                 }
                 
                 // UI test
