@@ -141,10 +141,16 @@ spec:
 
             steps {
                 container(name: 'kaniko', shell: '/busybox/sh') {
-                    sh """#!/busybox/sh
-                        /kaniko/executor --dockerfile=`pwd`/opt/container/php-fpm/Dockerfile --context=`pwd` --destination=rendyananta/sample-todo-app:fpm-${GIT_COMMIT} --cache --cache-dir=/cache --cache-copy-layers
-                        /kaniko/executor --dockerfile=`pwd`/opt/container/nginx/Dockerfile --context=`pwd` --destination=rendyananta/sample-todo-app:nginx-${GIT_COMMIT} --cache --cache-dir=/cache --cache-copy-layers
-                    """
+                  script {
+                        try {
+                            sh """#!/busybox/sh
+                            /kaniko/executor --dockerfile=`pwd`/opt/container/php-fpm/Dockerfile --context=`pwd` --destination=rendyananta/sample-todo-app:fpm-${GIT_COMMIT} --cache --cache-dir=/cache --cache-copy-layers
+                            /kaniko/executor --dockerfile=`pwd`/opt/container/nginx/Dockerfile --context=`pwd` --destination=rendyananta/sample-todo-app:nginx-${GIT_COMMIT} --cache --cache-dir=/cache --cache-copy-layers
+                            """
+                        } catch (err) {
+                            error('Build aborted. Reason: Cannot build docker image')
+                        }
+                    }
                 }
             }
         }

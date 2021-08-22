@@ -13,7 +13,7 @@ COPY /artisan artisan
 COPY /composer.json composer.json
 COPY /composer.lock composer.lock
 
-RUN composer install --prefer-dist --no-ansi --no-autoloader --no-dev
+RUN composer install --prefer-dist --no-ansi --no-autoloader
 
 # Optimize for image building cache
 COPY /bootstrap bootstrap
