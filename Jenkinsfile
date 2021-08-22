@@ -57,52 +57,36 @@ spec:
             steps {
                 // 
                 container(name: 'composer', shell: '/bin/ash') {
-                    try {
-                        catchError {
-                            sh """#!/bin/ash
-                              composer install --prefer-dist --no-ansi
-                            """
-                        }
-                    }
-                    finally {
-                        error('Build aborted. Reason: Cannot pass unit tests')
+                    catchError {
+                        sh """#!/bin/ash
+                          composer install --prefer-dist --no-ansi
+                        """
                     }
                 }
 
                 // Unit test
                 container(name: 'php', shell: '/bin/bash') {
-                    try {
-                        catchError () {
-                            sh """#!/bin/bash
-                              php artisan test --env=testing
-                            """
-                        }
-                    }
-                    finally {
-                        error('Build aborted. Reason: Cannot pass unit tests')
+                    catchError () {
+                        sh """#!/bin/bash
+                          php artisan test --env=testing
+                        """
                     }
                 }
                 
                 // UI test
                 container(name: 'php', shell: '/bin/bash') {
-                    try {
-                        catchError {
-                            sh """#!/bin/bash
-                              cp .env.example .env
-                              configure-laravel
-                              start-nginx-ci-project
+                    catchError {
+                        sh """#!/bin/bash
+                          cp .env.example .env
+                          configure-laravel
+                          start-nginx-ci-project
 
-                              npm ci
-                              npm run prod
+                          npm ci
+                          npm run prod
 
-                              php artisan dusk
-                            """
-                        }
-                    } 
-                    finally {
-                        error('Build aborted. Reason: Cannot pass UI tests')
+                          php artisan dusk
+                        """
                     }
-                    
                 }
             }
         }
