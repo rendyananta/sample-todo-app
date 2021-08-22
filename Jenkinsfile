@@ -68,7 +68,6 @@ spec:
                 container(name: 'php', shell: '/bin/bash') {
                     catchError {
                         sh """#!/bin/bash
-                          
                           php artisan test --env=testing
                         """
                     }
@@ -78,7 +77,6 @@ spec:
                 container(name: 'php', shell: '/bin/bash') {
                     catchError {
                         sh """#!/bin/bash
-                          php artisan test --env=testing
                           cp .env.example .env
                           configure-laravel
                           start-nginx-ci-project
