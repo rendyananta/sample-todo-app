@@ -57,36 +57,48 @@ spec:
             steps {
                 // 
                 container(name: 'composer', shell: '/bin/ash') {
-                    catchError {
-                        sh """#!/bin/ash
-                          composer install --prefer-dist --no-ansi
-                        """
-                    }
+                    
+                        catchError {
+                            sh """#!/bin/ash
+                              composer install --prefer-dist --no-ansi
+                            """
+                        }
+                    
                 }
 
                 // Unit test
                 container(name: 'php', shell: '/bin/bash') {
-                    catchError () {
-                        sh """#!/bin/bash
-                          php artisan test --env=testing
-                        """
+                  script {
+                    try {
+                        catchError () {
+                            sh """#!/bin/bash
+                              php artisan test --env=testing
+                            """
+                        }
                     }
+                    finally {
+                        error('Build aborted. Reason: Cannot pass unit tests')
+                    }
+                  }
                 }
                 
                 // UI test
                 container(name: 'php', shell: '/bin/bash') {
-                    catchError {
-                        sh """#!/bin/bash
-                          cp .env.example .env
-                          configure-laravel
-                          start-nginx-ci-project
+                    
+                        catchError {
+                            sh """#!/bin/bash
+                              cp .env.example .env
+                              configure-laravel
+                              start-nginx-ci-project
 
-                          npm ci
-                          npm run prod
+                              npm ci
+                              npm run prod
 
-                          php artisan dusk
-                        """
-                    }
+                              php artisan dusk
+                            """
+                        }
+                    
+                    
                 }
             }
         }
