@@ -78,7 +78,11 @@ pipeline {
 
         stage('deploy') {
             when { branch 'main' }
-            agent any
+            
+            agent {
+                label 'default'
+            }
+
             steps {
                 withKubeConfig([credentialsId: 'k3s-kubeconfig']) {
                     sh """
