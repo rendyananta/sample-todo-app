@@ -3,7 +3,9 @@ pipeline {
 
     stages {
         stage('test') {
-            agent 'php-mysql'
+            agent {
+                label 'php-mysql'
+            }
 
             steps {
                 // 
@@ -54,7 +56,9 @@ pipeline {
         }
       
         stage('build') {
-            agent 'kaniko'
+            agent {
+                label 'kaniko'
+            }
 
             steps {
                 container(name: 'kaniko', shell: '/busybox/sh') {
