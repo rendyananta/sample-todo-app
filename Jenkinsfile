@@ -3,56 +3,7 @@ pipeline {
 
     stages {
         stage('test') {
-            agent {
-                kubernetes {
-                    yaml """
-kind: Pod
-metadata:
-  name: php
-spec:
-  containers:
-    - name: composer
-      image: composer:2
-      imagePullPolicy: Always
-      command:
-        - sleep
-      args:
-        - 9999999
-    - name: php
-      image: chilio/laravel-dusk-ci:php-8.0
-      imagePullPolicy: Always
-      env:
-        - name: APP_URL
-          value: http://localhost
-        - name: DB_CONNECTION
-          value: mysql
-        - name: DB_HOST
-          value: 127.0.0.1
-        - name: DB_PORT
-          value: 3306
-        - name: DB_DATABASE
-          value: laravel
-        - name: DB_USERNAME
-          value: laravel
-        - name: DB_PASSWORD
-          value: laravel
-    - name: mariadb
-      image: mariadb:latest
-      env:
-        - name: MYSQL_RANDOM_ROOT_PASSWORD
-          value: "true"
-        - name: MYSQL_USER
-          value: laravel
-        - name: MYSQL_PASSWORD
-          value: laravel
-        - name: MYSQL_DATABASE
-          value: laravel
-      resources: {}
-      ports:
-        - containerPort: 3306
-                """
-                }
-            }
+            agent 'php-mysql'
 
             steps {
                 // 
@@ -103,41 +54,7 @@ spec:
         }
       
         stage('build') {
-            agent {
-                kubernetes {
-                    yaml """
-kind: Pod
-metadata:
-  name: kaniko
-spec:
-  containers:
-  - name: kaniko
-    image: gcr.io/kaniko-project/executor:debug
-    imagePullPolicy: Always
-    command:
-      - sleep
-    args:
-      - 9999999
-    volumeMounts:
-    - name: jenkins-docker-cfg
-      mountPath: /kaniko/.docker
-    - name: kaniko-cache
-      mountPath: /cache
-  volumes:
-  - name: jenkins-docker-cfg
-    projected:
-      sources:
-      - secret:
-          name: docker-credentials
-          items:
-            - key: .dockerconfigjson
-              path: config.json
-  - name: kaniko-cache
-    persistentVolumeClaim: 
-      claimName: kaniko-cache
-"""
-                }
-            }
+            agent 'kaniko'
 
             steps {
                 container(name: 'kaniko', shell: '/busybox/sh') {
