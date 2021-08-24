@@ -155,16 +155,30 @@ spec:
             }
         }
 
-        stage('deploy') {
-            when { branch 'main' }
-            agent any
-            steps {
-                withKubeConfig([credentialsId: 'k3s-kubeconfig']) {
-                    sh """
-                    kubectl apply -f `pwd`/opt/kubernetes/config-map.yaml -f `pwd`/opt/kubernetes/secrets.yaml
-                    APP_VERSION=${GIT_COMMIT} envsubst < `pwd`/opt/kubernetes/todo-app.yaml | kubectl apply -f -
-                    kubectl apply -f `pwd`/opt/kubernetes/todo-app-svc.yaml -f `pwd`/opt/kubernetes/todo-app-ingress.yaml
-                    """
+        stage('deployment') {
+            parallel {
+                stage('deploy') {
+                    when { branch 'main' }
+                    agent any
+                    steps {
+                        withKubeConfig([credentialsId: 'k3s-kubeconfig']) {
+                            sh """
+                            kubectl apply -f `pwd`/opt/kubernetes/config-map.yaml -f `pwd`/opt/kubernetes/secrets.yaml
+                            APP_VERSION=${GIT_COMMIT} envsubst < `pwd`/opt/kubernetes/todo-app.yaml | kubectl apply -f -
+                            kubectl apply -f `pwd`/opt/kubernetes/todo-app-svc.yaml -f `pwd`/opt/kubernetes/todo-app-ingress.yaml
+                            """
+                        }
+                    }
+                }
+
+                stage('code-analysis') {
+                    agent any
+                    steps {
+                        def sqScannerMsBuildHome = tool 'scanner-4.6'
+                        withSonarQubeEnv('sonar-server') {
+                            sh "${scannerHome}/bin/sonar-scanner -Dsonar.login=${SONAR_AUTH_TOKEN} -Dsonar.projectKey=laravel-sample-todo"
+                        }
+                    }
                 }
             }
         }
