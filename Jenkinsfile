@@ -132,9 +132,6 @@ spec:
           items:
             - key: .dockerconfigjson
               path: config.json
-  - name: kaniko-cache
-    persistentVolumeClaim: 
-      claimName: kaniko-cache
 """
                 }
             }
@@ -161,9 +158,10 @@ spec:
                     when { branch 'main' }
                     agent any
                     steps {
-                        withKubeConfig([credentialsId: 'k3s-kubeconfig']) {
+                        withKubeConfig([credentialsId: 'target-kubeconfig']) {
                             sh """
                             kubectl apply -f `pwd`/opt/kubernetes/config-map.yaml -f `pwd`/opt/kubernetes/secrets.yaml
+                            sops --pgp ${SOP_PGP_FP} -d `pwd`/opt/kubernetes/secrets.enc.yaml | kubectl apply -f
                             APP_VERSION=${GIT_COMMIT} envsubst < `pwd`/opt/kubernetes/todo-app.yaml | kubectl apply -f -
                             kubectl apply -f `pwd`/opt/kubernetes/todo-app-svc.yaml -f `pwd`/opt/kubernetes/todo-app-ingress.yaml
                             """

@@ -3,6 +3,9 @@ kind: Ingress
 metadata:
   name: todo-app-ingress
   namespace: default
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    cert-manager.io/issuer: "todo-app-letsencrypt-prod"
 spec:
   defaultBackend:
     service:
@@ -10,7 +13,7 @@ spec:
       port: 
         number: 80
   rules:
-  - host: todo-app.kubernetes-local
+  - host: "todo-app.k8s.rendyananta.my.id"
     http:
       paths:
       - path: /
