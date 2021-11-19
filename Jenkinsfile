@@ -156,10 +156,10 @@ spec:
                     when { branch 'main' }
                     agent any
                     steps {
-                        withCredentials([string(credentialsId: 'pgp-private-key', variable: 'PGP_PRIVATE_KEY'), string(credentialsId:'pgp-fp', variable: 'PGP_FP')]) {
+                        withCredentials([file(credentialsId: 'pgp-private-key', variable: 'PGP_PRIVATE_KEY'), string(credentialsId:'pgp-fp', variable: 'PGP_FP')]) {
                             withKubeConfig([credentialsId: 'target-kubeconfig']) {
                                 sh """
-                                echo ${PGP_PRIVATE_KEY} | gpg --import
+                                gpg --import ${PGP_PRIVATE_KEY}
                                 sops --pgp ${PGP_FP} -d `pwd`/opt/kubernetes/secrets.enc.yaml > `pwd`/opt/kubernetes/secrets.yaml
                                 kubectl apply -f `pwd`/opt/kubernetes/config-map.yaml -f `pwd`/opt/kubernetes/secrets.yaml
                                 APP_VERSION=${GIT_COMMIT} envsubst < `pwd`/opt/kubernetes/todo-app.yaml | kubectl apply -f -
