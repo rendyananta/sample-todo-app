@@ -177,7 +177,7 @@ spec:
                         script {
                             def sqScannerMsBuildHome = tool 'scanner-4.6'
                             withSonarQubeEnv('sonar-server') {
-                                sh "${sqScannerMsBuildHome}/bin/sonar-scanner -X -Dsonar.login=${SONAR_AUTH_TOKEN} -Dsonar.projectKey=laravel-sample-todo"
+                                sh "${sqScannerMsBuildHome}/bin/sonar-scanner -Dsonar.login=${SONAR_AUTH_TOKEN} -Dsonar.projectKey=laravel-sample-todo"
                             }
                         }
                     }
