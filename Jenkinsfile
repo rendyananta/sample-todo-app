@@ -160,8 +160,9 @@ spec:
                     steps {
                         withKubeConfig([credentialsId: 'target-kubeconfig']) {
                             sh """
+                            echo ${PGP_PRIVATE_KEY} | gpg --import
+                            sops --pgp ${SOP_PGP_FP} -d `pwd`/opt/kubernetes/secrets.enc.yaml > `pwd`/opt/kubernetes/secrets.yaml
                             kubectl apply -f `pwd`/opt/kubernetes/config-map.yaml -f `pwd`/opt/kubernetes/secrets.yaml
-                            sops --pgp ${SOP_PGP_FP} -d `pwd`/opt/kubernetes/secrets.enc.yaml | kubectl apply -f
                             APP_VERSION=${GIT_COMMIT} envsubst < `pwd`/opt/kubernetes/todo-app.yaml | kubectl apply -f -
                             kubectl apply -f `pwd`/opt/kubernetes/todo-app-svc.yaml -f `pwd`/opt/kubernetes/todo-app-ingress.yaml
                             """
