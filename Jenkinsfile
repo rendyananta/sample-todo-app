@@ -159,6 +159,7 @@ spec:
                         withCredentials([file(credentialsId: 'pgp-private-key', variable: 'PGP_PRIVATE_KEY'), string(credentialsId:'pgp-fp', variable: 'PGP_FP')]) {
                             withKubeConfig([credentialsId: 'target-kubeconfig']) {
                                 sh """
+                                cp \${PGP_PRIVATE_KEY} `pwd`
                                 ls -l
                                 #gpg --import ${PGP_PRIVATE_KEY}
                                 #sops --pgp ${PGP_FP} -d `pwd`/opt/kubernetes/secrets.enc.yaml > `pwd`/opt/kubernetes/secrets.yaml
