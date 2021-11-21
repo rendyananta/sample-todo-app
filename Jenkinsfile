@@ -159,7 +159,6 @@ spec:
                         withCredentials([file(credentialsId: 'pgp-private-key', variable: 'PGP_PRIVATE_KEY'), string(credentialsId:'pgp-fp', variable: 'PGP_FP')]) {
                             withKubeConfig([credentialsId: 'target-kubeconfig']) {
                                 sh """
-                                cp \${PGP_PRIVATE_KEY} `pwd`
                                 gpg --import ${PGP_PRIVATE_KEY}
                                 sops --pgp ${PGP_FP} -d `pwd`/opt/kubernetes/secrets.enc.yaml > `pwd`/opt/kubernetes/secrets.yaml
                                 kubectl apply -f `pwd`/opt/kubernetes/config-map.yaml -f `pwd`/opt/kubernetes/secrets.yaml
